@@ -28,6 +28,8 @@ class MyAccessBDD extends AccessBDD {
         switch($table){
             case "" :
                 // return $this->uneFonction(parametres);
+            case "produit_specifique" :
+                 return $this->selectMotCle($champs);
             default:
                 // cas général
                 return $this->selectTuplesOneTable($table, $champs);
@@ -180,5 +182,28 @@ class MyAccessBDD extends AccessBDD {
         // (enlève le dernier and)
         $requete = substr($requete, 0, strlen($requete)-5);   
         return $this->conn->updateBDD($requete, $champs);	        
+    }
+    
+    /**
+     * récupère le nom, la description et les détails des produits
+     * dont 'description' ou 'détails' contient le mot clé présent dans $champs
+     * @param array|null $champs contient juste 'cle' avec une valeur de cle
+     * @return ?array
+     */
+    private function selectMotCle(?array $champs) : ?array{
+        if(empty($champs)){
+            return null;
+        }
+        if(!array_key_exists('cle', $champs)){
+            return null;  
+        }
+        
+        $requete = "select p.nom, p.description, dp.details ";
+        $requete .= "from produit p left join details_produits dp on (p.id = dp.idproduit) ";
+        $requete .= "where p.description like :cle or dp.details like :cle ";
+        $requete .= "order by p.nom";
+        
+        $champsRequete['cle'] = '%' . $champs['cle'] . '%';        
+        return $this->conn->queryBDD($requete, $champsRequete);		
     }
 }
