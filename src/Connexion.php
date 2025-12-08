@@ -15,30 +15,30 @@ class Connexion {
     
     private function __construct(string $login, string $pwd, string $bd, string $server, string $port){
         try {
-            $this->conn = new PDO("mysql:host=$server;dbname=$bd;port=$port", $login, $pwd);
+            $this->conn = new \PDO("mysql:host=$server;dbname=$bd;port=$port", $login, $pwd);
             $this->conn->query('SET CHARACTER SET utf8');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
     
     public static function getInstance(string $login, string $pwd, string $bd, string $server, string $port) : Connexion{
-        if(self::$instance === null) {
+        if(self::$instance === null){
             self::$instance = new Connexion($login, $pwd, $bd, $server, $port);
         }
         return self::$instance;
     }
     
-    private function prepareRequete(string $requete, ?array $param=null) : \PDOStatement {
+    private function prepareRequete(string $requete, ?array $param=null) : \PDOStatement{
         try{
             $requetePrepare = $this->conn->prepare($requete);
-            if($param!== null && is_array($param)) {
-                foreach ($param as $key => &$value) {
-                    $requetePrepare->bindParam(":key", $value);
+            if($param !== null && is_array($param)){
+                foreach($param as $key => &$value){
+                    $requetePrepare->bindParam(":$key", $value);
                 }
             }
             return $requetePrepare;
-        } catch (Exception $e) {
+        }catch(Exception $e){
             throw $e;
         }
     }

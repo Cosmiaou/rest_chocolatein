@@ -69,7 +69,7 @@ class Url {
         return $data;
     }
     
-        public function recupVariable(string $nom, string $format="string") : string|array|null{
+    public function recupVariable(string $nom, string $format="string") : string|array|null{
         $variable = $this->data[$nom] ?? '';
         switch ($format){
             case "json" : 
@@ -77,7 +77,7 @@ class Url {
                 break;
         }
         return $variable;
-    }  
+    }    
     
     /**
      * récupère la méthode HTTP utilisée pour le transfert
